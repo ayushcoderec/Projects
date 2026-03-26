@@ -1,0 +1,20 @@
+# 1. PERMISSIVE CORS
+# This allows any website to request these images
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+    Header set Cross-Origin-Resource-Policy "cross-origin"
+</IfModule>
+
+# 2. DISABLE HOTLINK PROTECTION COMPLETELY
+# By removing the [F] (Forbidden) rules, we tell the server not to block anyone.
+<IfModule mod_rewrite.c>
+    RewriteEngine on
+    # Allow all requests for images regardless of where they come from
+    RewriteCond %{REQUEST_FILENAME} \.(jpg|jpeg|png|gif|webp)$ [NC]
+    RewriteRule . - [L]
+</IfModule>
+
+# 3. MIME TYPE SUPPORT
+AddType image/webp .webp

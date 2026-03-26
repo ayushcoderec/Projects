@@ -1,0 +1,34 @@
+# 1. DYNAMIC CORS (Cross-Origin Resource Sharing)
+# This allows specific domains to access your images
+<IfModule mod_headers.c>
+    # Set a variable if the origin is one of your websites
+    SetEnvIf Origin "https?://(www\.)?(abcddfg\.liveblog365\.com|vasafitnessusa\.blogspot\.com|knowledgetest\.in)$" AccessControlAllowOrigin=$0
+    Header add Access-Control-Allow-Origin %{AccessControlAllowOrigin}e env=AccessControlAllowOrigin
+    
+    Header add Access-Control-Allow-Methods "GET, OPTIONS"
+    Header set Cross-Origin-Resource-Policy "cross-origin"
+</IfModule>
+
+# 2. SELECTIVE HOTLINK PROTECTION
+# This whitelists your domains so the server doesn't block the request
+<IfModule mod_rewrite.c>
+    RewriteEngine on
+    
+    # 1. Allow empty referrers (direct access via URL)
+    RewriteCond %{HTTP_REFERER} !^$
+    
+    # 2. Whitelist: Your Main Admin Panel
+    RewriteCond %{HTTP_REFERER} !^https?://(www\.)?abcddfg\.liveblog365\.com [NC]
+    
+    # 3. Whitelist: Your Blogger Site
+    RewriteCond %{HTTP_REFERER} !^https?://(www\.)?vasafitnessusa\.blogspot\.com [NC]
+    
+    # 4. Whitelist: Your Knowledge Test Site
+    RewriteCond %{HTTP_REFERER} !^https?://(www\.)?knowledgetest\.in [NC]
+    
+    # 5. Block all other unauthorized referrers for images
+    RewriteRule \.(jpg|jpeg|png|gif|webp)$ - [NC,F]
+</IfModule>
+
+# 3. MIME TYPE SUPPORT
+AddType image/webp .webp
